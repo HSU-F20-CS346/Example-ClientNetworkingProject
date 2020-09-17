@@ -8,16 +8,23 @@ namespace ExampleClientNetworkingProject
 {
     class Program
     {
+        //You can adapt the code below for communications on port 3461 and 3462.
         static void SynchronousConnection(string address, int port)
         {
             try
             {
                 TcpClient client = new TcpClient(address, port);
-                BufferedStream stream = new BufferedStream(client.GetStream());
-                BinaryReader reader = new BinaryReader(stream);
-                BinaryWriter writer = new BinaryWriter(stream);
 
-                //TODO: do work!
+                //A using statement should automatically flush when it goes out of scope
+                using(BufferedStream stream = new BufferedStream(client.GetStream()))
+                {
+                    BinaryReader reader = new BinaryReader(stream);
+                    BinaryWriter writer = new BinaryWriter(stream);
+
+                    //TODO: do work!
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -26,6 +33,7 @@ namespace ExampleClientNetworkingProject
             }
         }
 
+        //A continuous connection is the best approach for communication on 3463
         public static void ContinuousConnection(string address, int port)
         {
             TcpClient client;
@@ -38,6 +46,9 @@ namespace ExampleClientNetworkingProject
                 stream = new BufferedStream(client.GetStream());
                 reader = new BinaryReader(stream);
                 writer = new BinaryWriter(stream);
+
+                //if you don't use a using statement, you'll need to flush manually.
+                stream.Flush();
             }
             catch (Exception ex)
             {
